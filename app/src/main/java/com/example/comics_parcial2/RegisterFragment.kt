@@ -1,6 +1,8 @@
 package com.example.comics_parcial2
 
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_register.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -82,22 +86,19 @@ class RegisterFragment : Fragment() {
 
     private fun usuarioCreado(){
         val builder = AlertDialog.Builder(requireContext())
-        with(builder){
-            setTitle("Registro exitoso")
-            setMessage("¡Nuevo usuario creado con éxito!")
-            /*Revisar que sí te mandé al LOGIN
-            -------------------------------------------------------
+        builder.setMessage("¡Nuevo usuario creado con éxito!")
+            .setCancelable(false)
+            .setPositiveButton("Ok", DialogInterface.OnClickListener{
+                //dialog, which -> loginButton.findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                dialog, id -> finish()
+            })
+        val alert = builder.create()
+        alert.setTitle("Registro exitoso")
+        alert.show()
+    }
 
-
-            /*setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, which ->
-                loginButton.findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-            })*/
-
-            ---------------------------------------------------------
-             */
-
-            setPositiveButton("Ok",null)
-            show()
-        }
+    private fun finish(){
+        Log.i("yoloswag", "This is a test 1")
+        view?.findNavController()?.navigate(R.id.action_registerFragment_to_loginFragment)
     }
 }

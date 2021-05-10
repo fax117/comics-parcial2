@@ -33,14 +33,9 @@ class LoginFragment : Fragment() {
         //setLoginRegister()
     }
 
-    // IF LOGGED IN USER GOES DIRECTLY TO MAIN PAGE.
+
     override fun onStart() {
         super.onStart()
-        val activeUser = auth.currentUser
-        if(activeUser != null){
-            loginButton.findNavController().navigate(R.id.action_loginFragment_to_comicListFragment)
-            //activity?.finish()
-        }
     }
 
     override fun onCreateView(
@@ -69,7 +64,6 @@ class LoginFragment : Fragment() {
                 ).addOnCompleteListener{
                     if(it.isSuccessful){
                         loginButton.findNavController().navigate(R.id.action_loginFragment_to_comicListFragment)
-                        //Navigation.createNavigateOnClickListener(R.id.action_loginFragment_to_mainMenu1Fragment)
                     }else{
                         Toast.makeText(context,"User/password incorrect.", Toast.LENGTH_LONG).show()
                     }
