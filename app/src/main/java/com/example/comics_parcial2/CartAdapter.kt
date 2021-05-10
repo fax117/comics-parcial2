@@ -10,8 +10,8 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class ComicsAdapter (private val comics : List<Comic>, val context: Context)
-    : RecyclerView.Adapter<ComicsAdapter.ComicViewHolder>(){
+class CartAdapter (private val comics : List<Comic>, val context: Context)
+    : RecyclerView.Adapter<CartAdapter.ComicViewHolder>(){
 
     class ComicViewHolder(val row: View) : RecyclerView.ViewHolder(row){
 
@@ -46,11 +46,5 @@ class ComicsAdapter (private val comics : List<Comic>, val context: Context)
     override fun onBindViewHolder(holder: ComicViewHolder, position: Int) {
         val comic = comics[position]
         holder.bind(comics!![position])
-
-        holder.itemView.setOnClickListener {
-            val action = ComicListFragmentDirections.actionComicListFragmentToComicDetailsFragment(comic)
-            holder.itemView.findNavController().navigate(action)
-
-        }
     }
 }

@@ -1,32 +1,50 @@
 package com.example.comics_parcial2
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.fragment_cart.*
+import kotlinx.android.synthetic.main.fragment_comic_list.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+abstract class SwipeToDelete (context: Context,
+                              direccion: Int, direccionArrastre: Int):
+    ItemTouchHelper.SimpleCallback(direccion, direccionArrastre){
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        return true
+    }
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CartFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+    }
+
+}
+
 class CartFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private lateinit var database: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+    private val userCart = ArrayList<Comic>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        database = FirebaseDatabase.getInstance()
+        val usuario = Firebase.auth.currentUser
+        reference = database.getReference("cart/${usuario.uid}")
     }
 
     override fun onCreateView(
@@ -37,23 +55,59 @@ class CartFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_cart, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CartFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CartFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if(userCart.size == 0){
+            retrieveCartData()
+        }
+        else{
+            recycler_cart.apply{
+                layoutManager = LinearLayoutManager(activity)
+                adapter = CartAdapter(userCart, context)
             }
+        }
     }
+
+    private fun retrieveCartData(){
+        recycler_cart.apply {
+            reference.addValueEventListener(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(userCart.size == 0){
+                        for(comic in snapshot.children){
+                            var objeto = comic.getValue(Comic::class.java)
+                            userCart.add(objeto as Comic)
+                        }
+                    }
+                    //Log.i("ImportantInfo", "State of cart: $userCart")
+
+                    layoutManager = LinearLayoutManager(activity)
+                    adapter = CartAdapter(userCart, context)
+
+                    val item = object : SwipeToDelete(context,
+                        ItemTouchHelper.UP,ItemTouchHelper.LEFT){
+                        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                            super.onSwiped(viewHolder, direction)
+                            val comic = userCart[ viewHolder.adapterPosition ]
+                            borraComic(comic)
+
+                        }
+                    }
+                    val itemTouchHelper = ItemTouchHelper(item)
+                    itemTouchHelper.attachToRecyclerView(recycler_cart)
+
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.i("cartError", "Failed to get user comics in cart.")
+                }
+            })
+        }
+    }
+
+    private fun borraComic(comic: Comic){
+        val usuario= Firebase.auth.currentUser
+        val referencia= FirebaseDatabase.getInstance().getReference("cart/${usuario.uid}/${comic.id}")
+        userCart.remove(comic)
+        referencia.removeValue()
+    }
+
 }

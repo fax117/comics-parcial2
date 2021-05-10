@@ -98,7 +98,6 @@ class RegisterFragment : Fragment() {
     }
 
     private fun finish(){
-        Log.i("yoloswag", "This is a test 1")
         view?.findNavController()?.navigate(R.id.action_registerFragment_to_loginFragment)
     }
 }

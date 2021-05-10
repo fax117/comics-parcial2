@@ -23,7 +23,7 @@
         tools:layout="@layout/fragment_register" >
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:popUpTo="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicListFragment"
@@ -33,22 +33,29 @@
         <action
             android:id="@+id/action_comicListFragment_to_comicDetailsFragment"
             app:destination="@id/comicDetailsFragment" />
+        <action
+            android:id="@+id/action_comicListFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicDetailsFragment"
         android:name="com.example.comics_parcial2.ComicDetailsFragment"
         android:label="fragment_comic_details"
         tools:layout="@layout/fragment_comic_details" >
-        <action
-            android:id="@+id/action_comicDetailsFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
         <argument
             android:name="comic"
             app:argType="com.example.comics_parcial2.Comic" />
+        <action
+            android:id="@+id/action_comicDetailsFragment_to_comicListFragment"
+            app:popUpTo="@id/comicListFragment"/>
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.example.comics_parcial2.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart" />
+        tools:layout="@layout/fragment_cart" >
+        <action
+            android:id="@+id/action_cartFragment_to_comicListFragment"
+            app:popUpTo="@id/comicListFragment" />
+    </fragment>
 </navigation>
