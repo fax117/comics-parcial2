@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_comicDetailsFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <argument
+            android:name="comic"
+            app:argType="com.example.comics_parcial2.Comic" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"

@@ -5,7 +5,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Comic(
-    val picture:Int,
-    val title:String,
-    val release_year: String,
-    val bio: String): Parcelable
+    val title: String,
+    val description: String,
+    val picture: String,
+    val cost: Int,
+): Parcelable
